@@ -44,7 +44,7 @@ int main() {
                 flag=(a[i]>0)?"heavy":"light";
             }
         }
-        cout<<(char)('A'+mi)<<" is the counterfeit coin and it is "<<flag;
+        cout<<(char)('A'+mi)<<" is the counterfeit coin and it is "<<flag<<".";
 	    cout<<endl;
 	}
 	return 0;
