@@ -1,0 +1,60 @@
+#include<iostream>
+#include<cmath>
+#include<cstdio>
+#include<algorithm>
+#include<limits>
+#include<vector>
+using namespace std;
+#define MOD 1000000007LL
+#define LL long long
+#define ULL unsigned long long
+#define LD long double
+#define MAX(a,b) ((a)>(b)?(a):(b))
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define ABS(x) ((x)<0?-(x):(x))
+#define si(n) scanf("%d",&n)
+#define sf(n) scanf("%f",&n)
+#define sl(n) scanf("%ld",&n)
+#define sll(n) scanf("%lld",&n)
+#define slu(n) scanf("%llu",&n)
+#define sd(n) scanf("%lf",&n)
+#define ss(n) scanf("%s",n)
+#define pnl printf("\n")//print new line
+#define REP(i,n) for(int i=0;i<(n);i++)//repeat n times
+#define FOR(i,a,b) for(int i=(a);i<(b);i++)//end not included
+#define FORR(i,n) for(int i=(n);i>=0;i--)//reverse for
+#define DB(x) cout<<"\n"<<#x<<" = "<<(x)<<"\n";//debugging
+#define CL(a,b) memset(a,b,sizeof(a))
+const double PI=3.14159265358979323846264338327950288419716939937510582097494459230;
+void swaps (char *x,char *y){char temp;temp=*x;*x=*y;*y=temp;}
+void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
+ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
+//}
+
+int main() {
+	// your code goes here
+	int n;
+	while(si(n)!=EOF){
+		int a[n][n];
+		for(int i=0;i<n;i++){
+			for(int j=0;j<n;j++){
+				si(a[i][j]);
+				if(i>0) a[i][j] += a[i-1][j];
+				if(j>0) a[i][j] += a[i][j-1];
+				if(i>0 && j>0) a[i][j] -= a[i-1][j-1];
+			}
+		}
+		int max_sum=-127*101*101, sum;
+		for(int i=0;i<n;i++){ for(int j=0;j<n;j++){
+			for(int k=i;k<n;k++){ for(int l=j;l<n;l++){
+				sum = a[k][l];
+				if(i>0) sum -= a[i-1][l];
+				if(j>0) sum -= a[k][j-1];
+				if(i>0 && j>0) sum += a[i-1][j-1];
+				max_sum = MAX(max_sum,sum);
+			} }
+		} }
+		cout<<max_sum<<endl;
+	}
+	return 0;
+}
