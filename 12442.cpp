@@ -31,29 +31,41 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+vector<int> a, visited, len;
+
+int dfs(int i){
+	int ans=0;
+	visited[i]=1;
+	if(!visited[a[i]] && a[i])
+		ans += 1 + dfs(a[i]);
+	visited[i]=0;
+	return len[i] = ans;
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
+	int t, cas=1;
+	si(t);
+	while(t--){
+		int n, u, v;
+		si(n);
+		a.assign(n+1,0);
+		visited.assign(n+1,0);
+		len.assign(n+1, -1);
+		for(int i=0;i<n;i++){
+			si(u);si(v);
+			a[u]=v;
+		}
+		int max=0, mi=0;
+		for(int i=1;i<=n;i++){
+			if(len[i]==-1)
+				dfs(i);
+			if(max<len[i]){
+				max=len[i];
+				mi=i;
 			}
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		printf("Case %d: %d\n", cas++, mi);
 	}
 	return 0;
 }

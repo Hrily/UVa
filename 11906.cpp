@@ -30,30 +30,62 @@ void swaps (char *x,char *y){char temp;temp=*x;*x=*y;*y=temp;}
 void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
+#define UNVISITED 0
+#define VISITED 1
+#define WATER	 -1
+
+vector< vector<int> > a;
+int r, c, m, n, even=0, odd=0;
+
+int di[] = {-1, -1,  1, 1},
+    dj[] = {-1,  1, -1, 1};
+
+int get_val(int i, int j){
+	if(i<0 || i>=r || j<0 || j>=c)
+		return 0;
+	if(a[i][j]==WATER)
+		return 0;
+	return 1;
+}
+
+void dfs(int i, int j){
+	if(i<0 || i>=r || j<0 || j>=c)
+		return;
+	int ans=0;
+	if(a[i][j]==UNVISITED){
+		a[i][j]=VISITED;
+		for(int k=0;k<4;k++){
+			ans += get_val(i+di[k]*m, j+dj[k]*n);
+			if(m!=n)ans += get_val(i+di[k]*n, j+dj[k]*m);
+			dfs(i+di[k]*m, j+dj[k]*n);
+			if(m!=n)dfs(i+di[k]*n, j+dj[k]*m);
+		}
+		if(n==0 || m==0)
+			ans/=2;;
+		//printf("At %d %d = %d\n", i, j, ans);
+		if(ans%2)
+			odd++;
+		else
+			even++;
+	}
+}
 
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
-			}
+	int t, cas=1;
+	si(t);
+	while(t--){
+		even=odd=0;
+		si(r);si(c);si(m);si(n);
+		a.assign(r, vector<int>(c, 0));
+		int w, wi, wj;
+		si(w);
+		while(w--){
+			si(wi);si(wj);
+			a[wi][wj]=WATER;
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		if(m>0 || n>0)dfs(0,0);
+		printf("Case %d: %d %d\n", cas++, even, odd); 
 	}
 	return 0;
 }

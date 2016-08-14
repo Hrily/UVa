@@ -31,29 +31,49 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+int m, n;
+vector<string> a;
+
+int di[] = {-1, 0, 1,  0},	//0 = N, 1 = E, 2 = S, 3 = W
+    dj[] = { 0, 1, 0, -1};
+
+int get_adj_j(int j, int k){
+	int d = j + dj[k];
+	if(d<0)  return n-1;
+	if(d>=n) return 0;
+	return d;
+}
+
+int flood_fill(int i, int j, char q, char r){
+	if(i<0 || i>=m || j<0 || j>=n)
+		return 0;
+	if(a[i][j]!=q)
+		return 0;
+	int ans=1;
+	a[i][j]=r;
+	for(int k=0;k<4;k++)
+		ans += flood_fill(i+di[k], get_adj_j(j,k), q, r);
+	return ans;
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
+	while(scanf("%d %d", &m, &n)!=EOF){
+		a.assign(m, "");
+		for(int i=0;i<m;i++)
+			cin>>a[i];
+		int x, y;
+		si(x);si(y);
+		char q=a[x][y];
+		flood_fill(x,y,q,'.');
+		int max=0;
+		for(int i=0;i<m;i++){
 			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
+				int x = flood_fill(i,j,q,'.');
+				max = MAX(max, x);
 			}
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		cout<<max<<endl;
 	}
 	return 0;
 }

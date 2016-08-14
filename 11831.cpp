@@ -31,29 +31,65 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+int diri[] = {-1, 0, 1,  0},	//N, E, S, W ;
+    dirj[] = { 0, 1, 0, -1};	//0, 1, 2, 3 ;
+
+int D(int dir){
+	return ((dir<3)?dir+1:0);
+}
+
+int E(int dir){
+	return ((dir>0)?dir-1:3);
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
+	int n, m, q;
+	while(scanf("%d %d %d",&n, &m, &q), n>0){
+		string a[n];
+		int pi=0, pj=0, dir=0;
+		for(int i=0;i<n;i++){
+			cin>>a[i];
+			for(int j=0;j<m;j++){
+				if(a[i][j]=='N'){
+					pi=i;pj=j;
+					dir=0;
+				}else if(a[i][j]=='L'){
+					pi=i;pj=j;
+					dir=1;
+				}else if(a[i][j]=='S'){
+					pi=i;pj=j;
+					dir=2;
+				}else if(a[i][j]=='O'){
+					pi=i;pj=j;
+					dir=3;
+				}
 			}
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		string s;
+		cin>>s;
+		int count=0;
+		for(int i=0;i<s.size();i++){
+			if(s[i]=='D')
+				dir=D(dir);
+			else if(s[i]=='E')
+				dir=E(dir);
+			else{
+				//cout<<pi<<' '<<pj<<' '<<dir<<endl;
+				pi += diri[dir];
+				pj += dirj[dir];
+				if( (pi<0 || pi>=n || pj<0 || pj>=m) ||
+				    (a[pi][pj]=='#')){
+					pi -= diri[dir];
+					pj -= dirj[dir];
+				}else if(a[pi][pj]=='*'){
+					a[pi][pj]='.';
+					count++;
+				}
+				//cout<<count<<endl;
+			}
+		}
+		cout<<count<<endl;
 	}
 	return 0;
 }

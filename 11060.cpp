@@ -4,6 +4,8 @@
 #include<algorithm>
 #include<limits>
 #include<vector>
+#include<map>
+#include<queue>
 using namespace std;
 #define MOD 1000000007LL
 #define LL long long
@@ -31,29 +33,55 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+int n;
+map<string,  vector<string> > a;
+map<string, int> inDeg;
+vector<string> topOrder, v;
+
+void kahn(){
+	//calculating in degrees	
+	queue<string> q;
+	map<string, vector<string> >::iterator it;
+	for(it=a.begin();it!=a.end();it++)
+		for(int j=0;j<it->second.size();j++)
+			inDeg[it->second[j]]++;
+	//Enqueue vertices w/ inDeg=0
+	for(int i=0;i<n;i++)
+		if(inDeg[v[i]]==0)
+			q.push(v[i]);
+	//BFS
+	while(!q.empty()){
+		string u = q.front();
+		q.pop();
+		topOrder.push_back(u);
+		for(int i=0;i<a[u].size();i++)
+			if(--inDeg[a[u][i]]==0)
+				q.push(a[u][i]);
+	}
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
+	int cas=1;
+	while(si(n)!=EOF){
+		int m;
+		v.assign(n+1,"");
+		topOrder.clear();
+		inDeg.clear();
+		a.clear();
 		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
-			}
+			cin>>v[i];
+		si(m);
+		string u, v;
+		for(int i=0;i<m;i++){
+			cin>>u>>v;
+			a[u].push_back(v);
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		kahn();
+		cout<<"Case #"<<cas++<<": Dilbert should drink beverages in this order:";
+		for(int i=0;i<topOrder.size();i++)
+			cout<<" "<<topOrder[i];
+		cout<<'.'<<endl<<endl;
 	}
 	return 0;
 }

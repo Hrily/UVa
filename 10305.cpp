@@ -31,29 +31,38 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+vector< vector<int> > a;
+int n;
+vector<int> visited, stack;
+
+void dfs(int ind){
+	visited[ind]=1;
+	for(int i=0;i<a[ind].size();i++)
+		if(!visited[a[ind][i]])
+			dfs(a[ind][i]);
+	stack.push_back(ind);
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
-			}
+	int m, u, v;
+	while(scanf("%d%d", &n, &m), n>0){
+		a.assign(n+1, vector<int>());
+		visited.assign(n+1, 0);
+		while(m--){
+			si(u);si(v);
+			a[u].push_back(v);
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		for(int i=1;i<=n;i++)
+			if(!visited[i])
+				dfs(i);
+		cout<<stack.back();
+		stack.pop_back();
+		while(stack.size()){
+			cout<<' '<<stack.back();
+			stack.pop_back();
+		}
+		cout<<endl;
 	}
 	return 0;
 }

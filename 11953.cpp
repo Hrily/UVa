@@ -31,29 +31,42 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+int n;
+vector<string> a;
+
+int di[] = {-1, 0, 1,  0},	//0 = N, 1 = E, 2 = S, 3 = W
+    dj[] = { 0, 1, 0, -1};
+
+int flood_fill(int i, int j){
+	if(i<0 || i>=n || j<0 || j>=n)
+		return 0;
+	if(a[i][j]=='.')
+		return 0;
+	int ans=1;
+	a[i][j]='.';
+	for(int k=0;k<4;k++)
+		ans += flood_fill(i+di[k], j+dj[k]);
+	return ans;
+}
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
+	int t, cas=1;
+	si(t);
+	while(t--){
+		si(n);
+		a.assign(n,"");
 		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
+			cin>>a[i];
+		int count=0;
+		for(int i=0;i<n;i++){
 			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
+				if(a[i][j]=='x'){
+					int x=flood_fill(i,j);
+					if(x) count++;
+				}
 			}
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		printf("Case %d: %d\n", cas++, count);
 	}
 	return 0;
 }

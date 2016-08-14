@@ -31,29 +31,57 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+vector< vector<int> > a;
+vector<int> visited, parent, low, disc;
+vector< pair<int, int> > bridges;
+int tim;
+
+void find_bridges(int u){
+	visited[u]=1;
+	int children = 0;
+	disc[u]=low[u]=tim++;
+	for(int i=0;i<a[u].size();i++){
+		int v = a[u][i];
+		if(!visited[v]){
+			children++;
+			parent[v]=u;
+			find_bridges(v);
+			low[u]=MIN(low[u],low[v]);
+			if(low[v]>disc[u])
+				bridges.push_back(make_pair(MIN(u,v),MAX(u,v)));
+		}else if(parent[u]!=v)
+			low[u]=MIN(low[u], disc[v]);
+	}
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
+	int n;
+	while(si(n)!=EOF){
+		a.assign(n+1, vector<int>());
+		visited.assign(n+1, 0);
+		parent.assign(n+1, -1);
+		low.assign(n+1, 0);
+		disc.assign(n+1, 0);
+		bridges.clear();
+		tim=0;
+		for(int i=0;i<n;i++){
+			int u, nu, v;
+			scanf("%d (%d)", &u, &nu);
+			while(nu--){
+				si(v);
+				a[u].push_back(v);
 			}
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		for(int i=0;i<n;i++)
+			if(!visited[i])
+				find_bridges(i);
+		sort(bridges.begin(), bridges.end());
+		printf("%d critical links\n", (int)bridges.size());
+		for(int i=0;i<bridges.size();i++)
+			printf("%d - %d\n", bridges[i].first, bridges[i].second);
+		pnl;
+		n=0;
 	}
 	return 0;
 }

@@ -31,29 +31,39 @@ void swapi(int *a,int *b){int temp;temp=*a;*a=*b;*b=temp;}
 ULL gcd(ULL a,ULL b){if(a==0)return b;if(b==0)return a;if(a==1||b==1)return 1;if(a==b)return a;if(a>b)return gcd(b,a%b);else return gcd(a,b%a);}
 //}
 
+vector< vector<int> > a;
+vector<int> visited, color;
+
+int bipartite(int ind){
+	visited[ind]=1;
+	for(int i=0;i<a[ind].size();i++){
+		if(!visited[a[ind][i]]){
+			color[a[ind][i]]=1-color[ind];
+			return bipartite(a[ind][i]);
+		}
+		if(color[ind]==color[a[ind][i]])
+			return 0;
+	}
+	return 1;
+}
+
 int main() {
 	// your code goes here
-	int m,n;
-	while(scanf("%d %d",&m,&n)!=EOF){
-		int a[n];
-		for(int i=0;i<n;i++)
-			si(a[i]);
-		int max_sum=0, max_mask=0;
-		for(int mask=0;mask<(1<<n);mask++){
-			int sum=0;
-			for(int j=0;j<n;j++){
-				if(mask & (1<<j))
-					sum+=a[j];
-			}
-			if(sum>max_sum && sum<=m){
-				max_sum=sum;
-				max_mask=mask;
-			}
+	int n,m;
+	while(scanf("%d%d", &n, &m), n>0){
+		a.assign(n,vector<int>());
+		visited.assign(n,0);
+		color.assign(n,-1);
+		int u, v;
+		while(m--){
+			si(u);si(v);
+			a[u].push_back(v);
+			a[v].push_back(u);
 		}
-		for(int j=0;j<n;j++)
-			if(max_mask & (1<<j))
-				cout<<a[j]<<' ';
-		cout<<"sum:"<<max_sum<<endl;
+		color[0]=0;
+		if(!bipartite(0))
+			cout<<"NOT ";
+		cout<<"BICOLORABLE.\n";
 	}
 	return 0;
 }
